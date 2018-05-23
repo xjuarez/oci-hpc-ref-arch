@@ -51,8 +51,8 @@ computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --s
 #LIST IP's
 echo
 echo 'Created Headnode and Compute Nodes'
-echo 'Please wait a few minutes for init scripts to complete'
-sleep 120
+echo 'Waiting five minutes for init scripts to complete'
+sleep 300
 
 masterIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."public-ip"')
 masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."private-ip"')
