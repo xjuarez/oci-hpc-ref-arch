@@ -7,9 +7,9 @@ export PRE=`uuidgen | cut -c-5`
 export subnet=4
 export IMAGE=Oracle-Linux-7.5-2018.05.09-1
 export ad=1
-export region=us-ashburn-1
 export SIZE=BM.Standard1.36	
 export BLKSIZE_TB=8
+export region=us-ashburn-1
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
 #export region=eu-london-1
@@ -33,13 +33,11 @@ S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-d
 #FSS=`oci fs file-system create --region $region --availability-domain "$AD" -c $C --display-name "HPC_File_System" --wait-for-state ACTIVE | jq -r '.data.id'`
 #MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$PRE" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 
-#CREATE BLOCK
+#CREATE BLOCK AND HEADNODE
+echo
+echo 'Creating Block Storage and Headnode'
 BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
 BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
-
-#CREATE HEADNODE
-echo
-echo 'Creating Headnode'
 masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
 attachID=`oci compute volume-attachment attach --region $region --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED | jq -r '.data.id'`
 attachIQN=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.iqn`
