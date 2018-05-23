@@ -51,12 +51,12 @@ computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --s
 #LIST IP's
 echo
 echo 'Created Headnode and Compute Nodes'
-echo 'Waiting five minutes for IP addresses'
-sleep 300
+echo 'Please wait a few minutes for init scripts to complete'
+sleep 120
 
 masterIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."public-ip"')
 masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."private-ip"')
-for iid in `oci compute instance list --region $region -c $C | jq -r '.data[] | select(."lifecycle-state"=="RUNNING") | .id'`; do newip=`oci compute instance list-vnics --region $region --instance-id $iid | jq -r '.data[0] | ."display-name"+": "+."private-ip"+", "+."public-ip"'`; echo $iid, $newip; done
+#for iid in `oci compute instance list --region $region -c $C | jq -r '.data[] | select(."lifecycle-state"=="RUNNING") | .id'`; do newip=`oci compute instance list-vnics --region $region --instance-id $iid | jq -r '.data[0] | ."display-name"+": "+."private-ip"+", "+."public-ip"'`; echo $iid, $newip; done
 
 #COMMANDS TO RUN ON MASTER
 scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
@@ -67,6 +67,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh sudo sh /root/oci-hpc-ref-a
 cat << EOF >> removeCluster-$PRE.sh
 #!/bin/bash
 export masterIP=$masterIP
+export masterPRVIP=$masterPRVIP
 export USER=$USER
 export C=$1
 export PRE=$PRE
@@ -77,6 +78,7 @@ export NG=$NG
 export RT=$RT
 export SL=$SL
 export S=$S
+export BV=$BV
 export masterID=$masterID
 
 
