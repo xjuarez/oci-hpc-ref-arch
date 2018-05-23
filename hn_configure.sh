@@ -1,6 +1,7 @@
 #!/bin/bash
 MYUSER=opc
-MYHOST=10.0.1.2
+SUB=`hostname -i | awk -F'.' '{ print $3 }'`
+MYHOST=10.0.$SUB.2
 
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
