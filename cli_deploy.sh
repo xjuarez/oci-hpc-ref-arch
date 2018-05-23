@@ -39,7 +39,9 @@ BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs 409
 echo
 echo 'Creating Headnode'
 masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file hn_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
-oci compute volume-attachment attach $INFO --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED 
+attachID=`oci compute volume-attachment attach --region $region --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED | jq -r '.data.id'`
+attachIQN=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.iqn`
+attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.ipv4`
 
 #CREATE COMPUTE
 echo
