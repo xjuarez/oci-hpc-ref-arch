@@ -59,7 +59,7 @@ for iid in `oci compute instance list --region $region -c $C | jq -r '.data[] | 
 
 #COMMANDS TO RUN ON MASTER
 scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
-#ssh -o StrictHostKeyChecking=no $USER@$masterIP 
+ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/mount_block.sh $attachIQN $attachIPV4
 
 #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
