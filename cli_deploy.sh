@@ -56,7 +56,10 @@ sleep 300
 
 masterIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."public-ip"')
 for iid in `oci compute instance list --region $region -c $C | jq -r '.data[] | select(."lifecycle-state"=="RUNNING") | .id'`; do newip=`oci compute instance list-vnics --region $region --instance-id $iid | jq -r '.data[0] | ."display-name"+": "+."private-ip"+", "+."public-ip"'`; echo $iid, $newip; done
+
+#COMMANDS TO RUN ON MASTER
 scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
+#ssh -o StrictHostKeyChecking=no $USER@$masterIP 
 
 #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
