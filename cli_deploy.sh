@@ -8,13 +8,14 @@ export subnet=4
 export IMAGE=Oracle-Linux-7.5-2018.05.09-1
 export ad=2
 export region=us-ashburn-1
+export SIZE=VM.Standard1.1
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
 #export region=eu-london-1
-export INFO='--region '$region' --availability-domain '$AD' -c '$C
 
-export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-$ad' | awk '{ print $4 }'`
+export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
 export OS=`oci compute image list -c $C --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
+export INFO='--region '$region' --availability-domain '$AD' -c '$C
 
 #CREATE NETWORK
 echo
@@ -37,13 +38,13 @@ BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs 409
 #CREATE HEADNODE
 echo
 echo 'Creating Headnode'
-masterID=`oci compute instance launch $INFO --shape "BM.Standard1.36" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file hn_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
+masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file hn_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
 oci compute volume-attachment attach $INFO --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED 
 
 #CREATE COMPUTE
 echo
 echo 'Creating Compute Nodes'
-computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "BM.Standard1.36" --display-name "hpc_cn_$i-$PRE" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file hn_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
+computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_cn_$i-$PRE" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file hn_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
 echo
