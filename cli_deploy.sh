@@ -9,6 +9,7 @@ export IMAGE=Oracle-Linux-7.5-2018.05.09-1
 export ad=2
 export region=us-ashburn-1
 export SIZE=VM.Standard1.1
+export BLKSIZE_TB=8
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
 #export region=eu-london-1
@@ -33,7 +34,8 @@ S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-d
 #MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$PRE" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 
 #CREATE BLOCK
-BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs 4096 --wait-for-state AVAILABLE | jq -r '.data.id'`
+BLKSIZE_GB=expr $BLKSIZE_TB \* 1024
+BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
 
 #CREATE HEADNODE
 echo
