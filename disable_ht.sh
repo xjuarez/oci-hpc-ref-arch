@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# PARM: 1="0" turn off hyper threading, "1" turn it on.
-
+# argument: 1="0" turn off hyper threading, "1" turn it on.
+THREADS=`lscpu | grep -E '^Thread|^Core|^Socket|^CPU\(' | head -1 | awk '{ print $2 }'`
+CORES=`expr $threads / 2`
 yum install -y -q stress
 
 if [[ $# -ne 1 ]]; then
@@ -14,7 +15,7 @@ echo Thread pairs before change
 cat /sys/devices/system/cpu/cpu*/topology/thread_siblings_list | sort --unique --numeric-sort
 echo
 
-for k in `seq 52 103`; do 
+for k in `seq $CORES $THREADS`; do 
     echo $1 > /sys/devices/system/cpu/cpu$k/online;
 done
 
@@ -29,4 +30,4 @@ echo Thread pairs after change
 cat /sys/devices/system/cpu/cpu*/topology/thread_siblings_list | sort --unique --numeric-sort
 echo
 
-stress --cpu 52 --io 1 --vm 1 --vm-bytes 128M --timeout 10s
+stress --cpu $CORES --io 1 --vm 1 --vm-bytes 128M --timeout 10s
