@@ -24,7 +24,7 @@ install_nfsserver()
 install_nfsclient()
 {
   sleep 60
-  mkdir -p /mnt/share/scratch
+  mkdir -p /mnt/blk/share
   systemctl enable rpcbind
   systemctl enable nfs-server
   systemctl enable nfs-lock
