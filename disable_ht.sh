@@ -2,7 +2,7 @@
 
 # argument: 1="0" turn off hyper threading, "1" turn it on.
 THREADS=`lscpu | grep -E '^Thread|^Core|^Socket|^CPU\(' | head -1 | awk '{ print $2 }'`
-CORES=`expr $threads / 2`
+CORES=`expr $THREADS / 2`
 yum install -y -q stress
 
 if [[ $# -ne 1 ]]; then
