@@ -34,7 +34,7 @@ S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-d
 #MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$PRE" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 
 #CREATE BLOCK
-BLKSIZE_GB=expr $BLKSIZE_TB \* 1024
+BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
 BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
 
 #CREATE HEADNODE
