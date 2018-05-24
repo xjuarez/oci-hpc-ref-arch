@@ -36,7 +36,6 @@ install_nfsclient()
   localip=`hostname -i | cut --delimiter='.' -f -3`
   echo "$IPPRE:/mnt/blk/share     /mnt/blk/share      nfs defaults,mountproto=tcp,sec=sys 0 0" | tee -a /etc/fstab
   mount -a
-  chmod 777 /mnt/blk/share
 }
 
 if [ $IP = $IPPRE ];
