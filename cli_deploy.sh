@@ -62,6 +62,8 @@ masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $ma
 echo
 echo 'Adding key to head node'
 scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
+echo 'Waiting for node to complete configuration'
+ssh $USER@$masterIP 'while [ ! -f /tmp/sleep.txt ]; do sleep 60; echo "Waiting for node to complete configuration"; done'
 echo
 echo 'Attaching block volume to head node'
 ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4 > /dev/null
