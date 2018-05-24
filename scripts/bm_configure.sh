@@ -36,6 +36,7 @@ cd ~
 git clone https://github.com/oci-hpc/oci-hpc-ref-arch
 git clone https://github.com/oci-hpc/oci-hpc-benchmark
 source oci-hpc-ref-arch/scripts/disable_ht.sh 0
+source oci-hpc-benchmark/get_files.sh
 #source oci-hpc-ref-arch/scripts/nfs_setup.sh $MYHOST
 #source oci-hpc-ref-arch/install_ganglia.sh $MYHOST OCI 8649
 
@@ -46,8 +47,8 @@ mkdir -p /home/$MYUSER/bin
 cat << EOF >> /home/$MYUSER/.bashrc
 export WCOLL=/home/$MYUSER/hostfile
 export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH
-#export I_MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
-#export MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
+export I_MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
+export MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
 EOF
 
 cat << EOF > /home/$MYUSER/.ssh/config
