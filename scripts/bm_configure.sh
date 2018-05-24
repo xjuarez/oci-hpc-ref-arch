@@ -22,7 +22,7 @@ IP=`hostname -i`
 localip=`echo $IP | cut --delimiter='.' -f -3`
 myhost=`hostname`
 nmap -p 80 $localip.0/28 | grep $localip | awk '{ print $5 }'> /home/$MYUSER/hostfile
-sed '/10.0.4.1/d' /home/$MYUSER/hostfile -i
+sed '/10.0.'$SUB'.1/d' /home/$MYUSER/hostfile -i
 
 cat << EOF >> /etc/security/limits.conf
 *               hard    memlock         unlimited
