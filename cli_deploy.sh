@@ -61,7 +61,7 @@ masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $ma
 #COMMANDS TO RUN ON MASTER
 scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
 ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
-ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
 
 #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
