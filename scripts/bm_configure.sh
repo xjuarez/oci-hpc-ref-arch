@@ -49,6 +49,7 @@ export WCOLL=/home/$MYUSER/hostfile
 export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH
 export I_MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
 export MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
+export I_MPI_FABRICS=tcp
 EOF
 
 cat << EOF > /home/$MYUSER/.ssh/config
@@ -71,5 +72,9 @@ chown $MYUSER:$MYUSER /home/$MYUSER/bin
 chown $MYUSER:$MYUSER /home/$MYUSER/.bashrc
 
 runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile hostname > /home/$MYUSER/hostnames"
+cat /home/$MYUSER/hostnames >> /etc/hosts
+sed -i 's/: / /g' /etc/hosts
+runuser -l $MYUSER -c "pdcp -w ^/home/$MYUSER/hostfile /etc/hosts ~"
+runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile sudo mv ~/hosts /etc/hosts"
 
 touch /var/log/CONFIG_COMPLETE
