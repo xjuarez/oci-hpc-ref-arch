@@ -8,7 +8,7 @@ export subnet=4
 export IMAGE=Oracle-Linux-7.5-2018.05.09-1
 export ad=1
 export SIZE=BM.Standard1.36	
-export BLKSIZE_TB=8
+export BLKSIZE_TB=2
 export region=us-ashburn-1
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
@@ -51,8 +51,8 @@ computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --s
 #LIST IP's
 echo
 echo 'Created Headnode and Compute Nodes'
-echo 'Waiting five minutes for init scripts to complete'
-sleep 300
+echo 'Waiting seven minutes for init scripts to complete'
+sleep 420
 
 masterIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."public-ip"')
 masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."private-ip"')
@@ -71,6 +71,10 @@ echo
 echo 'Creating NFS share'
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+echo 'Installing Ganglia'
+sleep 60
+ssh -o StrictHostKeyCheckin=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
+
 
 #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
