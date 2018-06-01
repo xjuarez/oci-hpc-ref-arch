@@ -32,7 +32,7 @@ install_ganglia_gmetad()
 	#SETUP SERVER	
 	GMETAD_CONFIG=/etc/ganglia/gmetad.conf	
   sed -i 's/^data_source.*/data_source "'$MGMT_HOSTNAME' cluster" '$MGMT_HOSTNAME'/g' $GMETAD_CONFIG
-	sed -i 's/# gridname "MyGrid".*/gridname "OCI Grid"/g' $GMETAD_CONFIG
+	sed -i 's/# gridname "MyGrid".*/gridname "OCI"/g' $GMETAD_CONFIG
 	sed -i 's/# setuid off.*/setuid off/g' $GMETAD_CONFIG
 	sed -i 's/setuid_username ganglia.*/#setuid_username ganglia/g' $GMETAD_CONFIG
 
