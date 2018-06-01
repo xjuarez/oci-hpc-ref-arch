@@ -24,14 +24,14 @@ is_master()
 
 install_ganglia_gmetad()
 {
-	echo "Installing Ganglia gmetad"
-  yum -y -q install epel-release
-  yum -y -q install httpd php php-mysql php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-snmp php-soap curl mesa-libEGL mesa-libGL
+	echo "Installing Ganglia Server"
+	yum -y -q install epel-release
+	yum -y -q install httpd php php-mysql php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-snmp php-soap curl mesa-libEGL mesa-libGL
 	yum -y -q install rrdtool rrdtool-devel ganglia-web ganglia-metad ganglia-gmond ganglia-gmond-python httpd apr-devel zlib-devel libconfuse-devel expat-devel pcre-devel
 
 	#SETUP SERVER	
 	GMETAD_CONFIG=/etc/ganglia/gmetad.conf	
-  sed -i 's/^data_source.*/data_source "'$MGMT_HOSTNAME' cluster" '$MGMT_HOSTNAME'/g' $GMETAD_CONFIG
+	sed -i 's/^data_source.*/data_source "'$MGMT_HOSTNAME' cluster" '$MGMT_HOSTNAME'/g' $GMETAD_CONFIG
 	sed -i 's/# gridname "MyGrid".*/gridname "OCI"/g' $GMETAD_CONFIG
 	sed -i 's/# setuid off.*/setuid off/g' $GMETAD_CONFIG
 	sed -i 's/setuid_username ganglia.*/#setuid_username ganglia/g' $GMETAD_CONFIG
@@ -48,13 +48,13 @@ install_ganglia_gmetad()
 
 install_gmond()
 {
-	echo "Installing Ganglia gmond"
+	echo "Installing Ganglia Client"
 
-  yum -y install epel-release	
-	yum -y install ganglia-gmond
+	yum -y -q install epel-release	
+	yum -y -q install ganglia-gmond
 
 	#configure Ganglia monitoring
-  GMOND_CONFIG=/etc/ganglia/gmond.conf	
+	GMOND_CONFIG=/etc/ganglia/gmond.conf	
 	sed -i '0,/name = "unspecified"/{s/name = "unspecified"/name = "'$CLUSTER_NAME'"/}'  $GMOND_CONFIG 
 	sed -i '0,/mcast_join = 239.2.11.71/{s/mcast_join = 239.2.11.71/host = '$MGMT_HOSTNAME'/}'  $GMOND_CONFIG
 	sed -i '0,/mcast_join = 239.2.11.71/{s/mcast_join = 239.2.11.71//}'  $GMOND_CONFIG
