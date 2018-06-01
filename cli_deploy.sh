@@ -61,16 +61,26 @@ masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $ma
 #COMMANDS TO RUN ON MASTER
 echo
 echo 'Adding key to head node'
-scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/
+n=0
+until [ $n -ge 5 ]
+do
+  scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/ && break  
+  n=$[$n+1]
+  sleep 60
+done
+
 echo 'Waiting for node to complete configuration'
 ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration"; done'
 echo
+
 echo 'Attaching block volume to head node'
 ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
 echo
+
 echo 'Creating NFS share'
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+
 echo 'Installing Ganglia'
 sleep 60
 ssh -o StrictHostKeyCheckin=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
