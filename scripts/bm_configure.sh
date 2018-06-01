@@ -38,8 +38,6 @@ git clone https://github.com/oci-hpc/oci-hpc-benchmark
 source oci-hpc-ref-arch/scripts/disable_ht.sh 0
 source oci-hpc-benchmark/get_files.sh
 #source oci-hpc-ref-arch/scripts/nfs_setup.sh $MYHOST
-#source oci-hpc-ref-arch/install_ganglia.sh $MYHOST OCI 8649
-
 
 #USER CONFIGURATION
 mkdir -p /home/$MYUSER/bin
