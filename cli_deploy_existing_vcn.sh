@@ -12,7 +12,7 @@ export BLKSIZE_TB=2
 export region=us-ashburn-1
 
 export VCNNAME=main
-export SUBNETNAME=Public Subnet kWVD:US-ASHBURN-AD-1
+export SUBNETNAME="Public Subnet kWVD:US-ASHBURN-AD-1"
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
 #export region=eu-london-1
