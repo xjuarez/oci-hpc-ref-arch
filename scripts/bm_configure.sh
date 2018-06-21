@@ -11,7 +11,7 @@ rpm -ivh epel-release-latest-7.noarch.rpm
 
 yum repolist
 yum check-update
-yum install -y -q pdsh stress axel openmpi screen
+yum install -y -q pdsh stress axel openmpi screen go
 yum install -y -q nfs-utils sshpass nmap htop pdsh screen git psmisc axel
 yum install -y -q gcc libffi-devel python-devel openssl-devel
 #yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
