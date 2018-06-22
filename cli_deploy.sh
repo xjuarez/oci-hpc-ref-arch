@@ -6,12 +6,12 @@ export C=$1
 export PRE=`uuidgen | cut -c-5`
 export subnet=4
 export IMAGE=Oracle-Linux-7.5-2018.05.09-1
-export ad=1
-export SIZE=BM.Standard1.36	
-export BLKSIZE_TB=2
-export region=us-ashburn-1
+export ad=3
+export SIZE=BM.Standard2.52
+export BLKSIZE_TB=1
+#export region=us-ashburn-1
 #export region=eu-frankfurt-1
-#export region=us-phoenix-1
+export region=us-phoenix-1
 #export region=eu-london-1
 
 export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
