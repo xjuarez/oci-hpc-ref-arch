@@ -91,6 +91,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty &&
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
+echo 'ssh '$USER'@'$masterIP'
 
 
 #CREATE REMOVE SCRIPT
