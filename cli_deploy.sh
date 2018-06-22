@@ -85,6 +85,13 @@ echo 'Installing Ganglia'
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
 
+echo 'Installing gotty'
+sleep 60
+ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+oci123456 -w bash
+echo
+echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
+echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
+
 
 #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
