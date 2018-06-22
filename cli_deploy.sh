@@ -20,7 +20,9 @@ export INFO='--region '$region' --availability-domain '$AD' -c '$C
 
 #CREATE NETWORK
 echo
-echo 'Creating Network'
+STARTTIME=`date +%T' '%D`
+echo 'Deploying HPC Cluster: '$PRE
+echo 'Creating Network: '`date +%T' '%D`
 V=`oci network vcn create --region $region --cidr-block 10.0.$subnet.0/24 --compartment-id $C --display-name "hpc_vcn-$PRE" --wait-for-state AVAILABLE | jq -r '.data.id'`
 NG=`oci network internet-gateway create --region $region -c $C --vcn-id $V --is-enabled TRUE --display-name "hpc_ng-$PRE" --wait-for-state AVAILABLE | jq -r '.data.id'`
 RT=`oci network route-table create --region $region -c $C --vcn-id $V --display-name "hpc_rt-$PRE" --wait-for-state AVAILABLE --route-rules '[{"cidrBlock":"0.0.0.0/0","networkEntityId":"'$NG'"}]' | jq -r '.data.id'`
@@ -35,7 +37,7 @@ S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-d
 
 #CREATE BLOCK AND HEADNODE
 echo
-echo 'Creating Block Storage and Headnode'
+echo 'Creating Block Storage and Headnode: '`date +%T' '%D`
 BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
 BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
 masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
@@ -45,7 +47,7 @@ attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID -
 
 #CREATE COMPUTE
 echo
-echo 'Creating Compute Nodes'
+echo 'Creating Compute Nodes: '`date +%T' '%D`'
 computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_cn_$i-$PRE" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
@@ -73,21 +75,26 @@ echo 'Waiting for node to complete configuration'
 ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T' '%D`"; done'
 echo
 
-echo 'Attaching block volume to head node'
+echo 'Attaching block volume to head node: '`date +%T' '%D`
 ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
 echo
 
-echo 'Creating NFS share'
+echo 'Creating NFS share: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
 
-echo 'Installing Ganglia'
+echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
 
-echo 'Installing gotty'
+echo 'Installing gotty: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
+echo
+echo 'HPC Cluster: '$PRE
+echo 'External IP Address: '$masterIP
+echo 'Started deployment: '$STARTTIME
+echo 'Completed deployment: '`date +%T' '%D`
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
