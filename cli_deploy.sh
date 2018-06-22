@@ -72,7 +72,7 @@ do
 done
 
 echo 'Waiting for node to complete configuration'
-ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T' '%D`"; done'
+ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration"; done'
 echo
 
 echo 'Attaching block volume to head node: '`date +%T' '%D`
