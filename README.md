@@ -15,6 +15,8 @@ export C=ocid1.tenancy.oc1..aaaaaaaxxxxxxxxxxxxxxxxxxxx
 ```bash
 ./cli_deploy.sh $C
 ```
+7) Connect
+There are multiple ways to connect to your OCI HPC cluster, open a web browser and navigate to: http://ipaddress:8080 to access a terminal or navigate to http://ipaddress/ganglia to view the installed Ganglia monitor of the cluster. Or just open up a terminal and access the cluster from opc@ipaddress.
 
 ## [DRAFT] HPC Configuration Scripts ##
 These scripts represent the initial progress of the Oracle Cloud Infrastructure HPC team in developing tools that will support the product group and the field in testing, benchmarking, and deploying HPC resources on the Oracle Cloud Infrastructure.
