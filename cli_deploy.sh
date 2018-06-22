@@ -47,7 +47,7 @@ attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID -
 
 #CREATE COMPUTE
 echo
-echo 'Creating Compute Nodes: '`date +%T' '%D`'
+echo 'Creating Compute Nodes: '`date +%T' '%D`
 computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_cn_$i-$PRE" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
