@@ -89,7 +89,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile su
 
 echo 'Installing gotty: '`date +%T' '%D`
 sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 echo
 echo 'HPC Cluster: '$PRE
 echo 'External IP Address: '$masterIP
@@ -98,7 +98,7 @@ echo 'Completed deployment: '`date +%T' '%D`
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
-echo 'ssh '$USER'@'$masterIP'
+echo 'ssh '$USER'@'$masterIP
 
 
 #CREATE REMOVE SCRIPT
