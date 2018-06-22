@@ -87,7 +87,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile su
 
 echo 'Installing gotty'
 sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+oci123456 -w bash
+ssh -o StrictHostKeyChecking=no $USER@$masterIP go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
