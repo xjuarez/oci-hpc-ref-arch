@@ -140,7 +140,7 @@ oci network internet-gateway delete --region $region --ig-id $NG --force
 sleep 10
 oci network vcn delete --region $region --vcn-id $V --force
 echo Complete
-rm removeCluster-$PRE.sh
+mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
 EOF
 
 chmod +x removeCluster-$PRE.sh
