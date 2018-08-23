@@ -128,7 +128,7 @@ EOF
 cat << "EOF" >> removeCluster-$PRE.sh
 echo Removing: Compute Nodes
 for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --force; done
-sleep 30
+sleep 60
 echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
 oci network subnet delete --region $region --subnet-id $S --force
 sleep 10
