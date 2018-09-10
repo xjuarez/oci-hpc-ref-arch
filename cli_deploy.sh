@@ -87,6 +87,12 @@ echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
 
+echo 'Installing Grafana: '
+sleep 30
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-5.2.4-1.x86_64.rpm'
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'sudo yum -y localinstall grafana-5.2.4-1.x86_64.rpm'
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'sudo service grafana-server start && sudo /sbin/chkconfig --add grafana-server'
+
 echo 'Installing gotty: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
@@ -97,6 +103,7 @@ echo 'Started deployment: '$STARTTIME
 echo 'Completed deployment: '`date +%T' '%D`
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
+echo 'Grafana installed, navigate to http://'$masterIP':3000 on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
 echo 'ssh '$USER'@'$masterIP
 
