@@ -75,4 +75,21 @@ sed -i 's/: / /g' /etc/hosts
 runuser -l $MYUSER -c "pdcp -w ^/home/$MYUSER/hostfile /etc/hosts ~"
 runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile sudo mv ~/hosts /etc/hosts"
 
+if [[ `hostname` = *master* ]];
+then
+    wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-5.2.4-1.x86_64.rpm
+    yum -y localinstall grafana-5.2.4-1.x86_64.rpm
+    yum install -y python-rrdtool rrdtool
+    grafana-cli plugins install grafana-simple-json-datasource
+    service grafana-server restart
+    mkdir rrd_server
+    cd rrd_server
+    wget https://github.com/doublemarket/grafana-rrd-server/releases/download/v0.0.5/grafana-rrd-server_linux_amd64.gz
+    gunzip grafana-rrd-server_linux_amd64.gz
+    chmod +x grafana-rrd-server_linux_amd64
+
+    service grafana-server start && sudo /sbin/chkconfig --add grafana-server
+    go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
+fi
+
 touch /var/log/CONFIG_COMPLETE
