@@ -90,6 +90,7 @@ then
 
     service grafana-server start && sudo /sbin/chkconfig --add grafana-server
     go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
+    
 fi
 
 touch /var/log/CONFIG_COMPLETE
