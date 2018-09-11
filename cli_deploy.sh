@@ -1,7 +1,7 @@
 #!/bin/bash
 #SET TENANCY
 export USER=opc
-export CNODES=2
+export CNODES=1
 export C=$1
 export PRE=`uuidgen | cut -c-5`
 export subnet=4
@@ -10,8 +10,8 @@ export ad=3
 export SIZE=BM.Standard2.52
 export BLKSIZE_TB=1
 #export region=us-ashburn-1
-#export region=eu-frankfurt-1
-export region=us-phoenix-1
+export region=eu-frankfurt-1
+#export region=us-phoenix-1
 #export region=eu-london-1
 
 export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
@@ -40,7 +40,7 @@ echo
 echo 'Creating Block Storage and Headnode: '`date +%T' '%D`
 BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
 BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
-masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_master-$PRE" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
+masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_master" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub | jq -r '.data.id'`
 attachID=`oci compute volume-attachment attach --region $region --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED | jq -r '.data.id'`
 attachIQN=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.iqn`
 attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.ipv4`
@@ -48,7 +48,7 @@ attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID -
 #CREATE COMPUTE
 echo
 echo 'Creating Compute Nodes: '`date +%T' '%D`
-computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_cn_$i-$PRE" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
+computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE$_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
 echo
@@ -72,7 +72,7 @@ do
 done
 
 echo 'Waiting for node to complete configuration'
-ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration"; done'
+ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T`"; done'
 echo
 
 echo 'Attaching block volume to head node: '`date +%T' '%D`
@@ -85,7 +85,17 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile su
 
 echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_master-$PRE
+ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_$PRE"_master"
+
+echo 'Transfer OpenFOAM: '`date +%T' '%D`
+sleep 60
+scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh'
+
+echo 'Installing gotty: '`date +%T' '%D`
+sleep 60
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
+
 
 echo
 echo 'HPC Cluster: '$PRE
