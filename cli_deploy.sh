@@ -48,7 +48,7 @@ attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID -
 #CREATE COMPUTE
 echo
 echo 'Creating Compute Nodes: '`date +%T' '%D`
-computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
+computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
 echo
@@ -86,15 +86,6 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile su
 echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_$PRE"_master"
-
-echo 'Transfer OpenFOAM: '`date +%T' '%D`
-sleep 60
-scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
-ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh'
-
-echo 'Installing gotty: '`date +%T' '%D`
-sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 
 echo
 echo 'HPC Cluster: '$PRE
