@@ -141,4 +141,4 @@ echo Complete
 mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
 EOF
 
-chmod +x removeCluster-$PRE.sh
+chmod +x removeCluster-$PRE*.sh
