@@ -82,11 +82,15 @@ then
     yum install -y python-rrdtool rrdtool
     grafana-cli plugins install grafana-simple-json-datasource
     service grafana-server restart
-    mkdir rrd_server
-    cd rrd_server
+    ln -s /usr/lib64/librrd.so.4 /usr/lib64/librrd.so.8
+
+    mkdir /home/$MYUSER/rrd_server
+    cd /home/$MYUSER/rrd_server
     wget https://github.com/doublemarket/grafana-rrd-server/releases/download/v0.0.5/grafana-rrd-server_linux_amd64.gz
     gunzip grafana-rrd-server_linux_amd64.gz
     chmod +x grafana-rrd-server_linux_amd64
+    echo export PATH=$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
+    /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 /var/lib/ganglia/rrds/oci/__SummaryInfo__
 
     service grafana-server start && sudo /sbin/chkconfig --add grafana-server
     go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
