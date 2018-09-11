@@ -87,6 +87,11 @@ echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh hpc_$PRE"_master"
 
+echo 'Transfer OpenFOAM: '`date +%T' '%D`
+sleep 60
+scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh'
+
 echo
 echo 'HPC Cluster: '$PRE
 echo 'External IP Address: '$masterIP
