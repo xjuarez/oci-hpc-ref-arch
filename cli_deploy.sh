@@ -4,7 +4,7 @@ export USER=opc
 export CNODES=1
 export C=$1
 export PRE=`uuidgen | cut -c-5`
-export subnet=4
+export subnet=9
 export IMAGE=Oracle-Linux-7.5-2018.08.14-0
 export ad=3
 export SIZE=BM.Standard2.52
@@ -33,7 +33,7 @@ S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-d
 #echo
 #echo 'Creating File System'
 #FSS=`oci fs file-system create --region $region --availability-domain "$AD" -c $C --display-name "HPC_File_System" --wait-for-state ACTIVE | jq -r '.data.id'`
-#MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$PRE" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
+#MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$g" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 
 #CREATE BLOCK AND HEADNODE
 echo
@@ -48,7 +48,7 @@ attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID -
 #CREATE COMPUTE
 echo
 echo 'Creating Compute Nodes: '`date +%T' '%D`
-computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE$_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
+computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file ~/.ssh/id_rsa.pub; done)
 
 #LIST IP's
 echo
@@ -95,7 +95,6 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh &&
 echo 'Installing gotty: '`date +%T' '%D`
 sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
-
 
 echo
 echo 'HPC Cluster: '$PRE
