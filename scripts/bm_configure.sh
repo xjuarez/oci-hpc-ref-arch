@@ -90,11 +90,9 @@ then
     gunzip grafana-rrd-server_linux_amd64.gz
     chmod +x grafana-rrd-server_linux_amd64
     echo export PATH=$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
-    /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 /var/lib/ganglia/rrds/oci/__SummaryInfo__
-
-    service grafana-server start && sudo /sbin/chkconfig --add grafana-server
-    go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash
-    
+    /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 -r /var/lib/ganglia/rrds/oci/__SummaryInfo__
+    service grafana-server start
+    /sbin/chkconfig --add grafana-server    
 fi
 
 touch /var/log/CONFIG_COMPLETE
