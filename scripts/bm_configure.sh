@@ -90,7 +90,7 @@ then
     gunzip grafana-rrd-server_linux_amd64.gz
     chmod +x grafana-rrd-server_linux_amd64
     echo export PATH=$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
-    /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 -r /var/lib/ganglia/rrds/oci/__SummaryInfo__
+    /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 -r /var/lib/ganglia/rrds/oci/__SummaryInfo__ &
     service grafana-server start
     /sbin/chkconfig --add grafana-server    
 fi
