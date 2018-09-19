@@ -3,7 +3,6 @@
 # argument: 1="0" turn off hyper threading, "1" turn it on.
 THREADS=`lscpu | grep -E '^Thread|^Core|^Socket|^CPU\(' | head -1 | awk '{ print $2 }'`
 CORES=`expr $THREADS / 2`
-yum install -y -q stress
 
 if [[ $# -ne 1 ]]; then
     echo 'One argument required. 0 to turn off hyper-threading or'
@@ -29,5 +28,3 @@ grep -E 'model|stepping' /proc/cpuinfo | sort -u
 echo Thread pairs after change
 cat /sys/devices/system/cpu/cpu*/topology/thread_siblings_list | sort --unique --numeric-sort
 echo
-
-stress --cpu $CORES --io 1 --vm 1 --vm-bytes 128M --timeout 10s
