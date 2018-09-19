@@ -1,10 +1,10 @@
 #!/bin/bash
 #SET TENANCY
 export USER=opc
-export CNODES=1
+export CNODES=5
 export C=$1
 export PRE=`uuidgen | cut -c-5`
-export subnet=9
+export subnet=5
 export IMAGE=Oracle-Linux-7.5-2018.08.14-0
 export ad=3
 export SIZE=BM.Standard2.52
