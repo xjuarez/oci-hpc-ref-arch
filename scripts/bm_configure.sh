@@ -11,12 +11,9 @@ rpm -ivh epel-release-latest-7.noarch.rpm
 
 yum repolist
 yum check-update
-yum install -y -q pdsh stress axel openmpi screen go
-yum install -y -q nfs-utils sshpass nmap htop pdsh screen git psmisc axel
-yum install -y -q gcc libffi-devel python-devel openssl-devel
-#yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
-#yum group install -y -q "X Window System"
-yum group install -y -q "Development Tools"
+yum install -y -q pdsh stress
+yum install -y -q nfs-utils sshpass pdsh screen git psmisc axel
+#yum install -y -q gcc libffi-devel python-devel openssl-devel
 
 IP=`hostname -i`
 localip=`echo $IP | cut --delimiter='.' -f -3`
@@ -36,8 +33,6 @@ cd ~
 git clone https://github.com/oci-hpc/oci-hpc-ref-arch
 git clone https://github.com/oci-hpc/oci-hpc-benchmark
 source oci-hpc-ref-arch/scripts/disable_ht.sh 0
-source oci-hpc-benchmark/get_files.sh
-#source oci-hpc-ref-arch/scripts/nfs_setup.sh $MYHOST
 
 #USER CONFIGURATION
 mkdir -p /home/$MYUSER/bin
