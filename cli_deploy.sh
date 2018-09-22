@@ -81,7 +81,7 @@ echo
 
 echo 'Creating NFS share: '`date +%T' '%D`
 sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$PRE | awk '{ print \$5 }' > /home/$USER/hostfile"
+ssh -o StrictHostKeyChecking=no $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
 
 echo 'Installing Ganglia: '`date +%T' '%D`
