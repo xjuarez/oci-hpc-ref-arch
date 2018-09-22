@@ -1,16 +1,16 @@
 #!/bin/bash
 #SET TENANCY
 export USER=opc
-export CNODES=5
+export CNODES=19
 export C=$1
 export PRE=`uuidgen | cut -c-5`
 export subnet=5
 export IMAGE=Oracle-Linux-7.5-2018.08.14-0
-export ad=3
+export ad=2
 export SIZE=BM.Standard2.52
 export BLKSIZE_TB=1
-#export region=us-ashburn-1
-export region=eu-frankfurt-1
+export region=us-ashburn-1
+#export region=eu-frankfurt-1
 #export region=us-phoenix-1
 #export region=eu-london-1
 
