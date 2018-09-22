@@ -1,14 +1,10 @@
 #!/bin/bash
 #PASS NFS HOST IP as ARGUMENT 1 
 IPPRE=$1
-IP=`hostname -i`
-localip=`echo $IP | cut --delimiter='.' -f -3`
-
 
 install_nfsserver()
 {
   #Setup the NFS server
-  nmap -p 80 $localip.0/20 | grep $localip | awk '{ print $5 }'> /home/opc/hostfile
   localip=`echo $IP | cut --delimiter='.' -f -3`
   mkdir -p /mnt/blk/share
   echo "/mnt/blk/share $localip.0/20(rw,sync,no_root_squash,no_all_squash)" | tee -a /etc/exports
@@ -27,7 +23,6 @@ install_nfsserver()
 install_nfsclient()
 {
   sleep 60
-  nmap -p 80 $localip.0/20 | grep $localip | awk '{ print $5 }'> /home/opc/hostfile
   mkdir -p /mnt/blk/share
   systemctl enable rpcbind
   systemctl enable nfs-server
