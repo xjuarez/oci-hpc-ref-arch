@@ -1,6 +1,7 @@
 #!/bin/bash
 #PASS NFS HOST IP as ARGUMENT 1 
 IPPRE=$1
+IP=`hostname -i`
 
 install_nfsserver()
 {
