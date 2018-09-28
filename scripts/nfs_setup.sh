@@ -37,7 +37,7 @@ install_nfsclient()
   mount -a
 }
 
-if [[ $IP = $IPPRE ]];
+if [ $IP = $IPPRE ];
 then
   echo Installing Server
   touch NFS_SERVER
