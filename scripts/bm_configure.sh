@@ -44,7 +44,7 @@ mkdir -p /home/$MYUSER/bin
 
 cat << EOF >> /home/$MYUSER/.bashrc
 export WCOLL=/home/$MYUSER/hostfile
-export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH
+export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:\$PATH
 export I_MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
 export MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
 export I_MPI_FABRICS=tcp
@@ -89,7 +89,7 @@ then
     wget https://github.com/doublemarket/grafana-rrd-server/releases/download/v0.0.5/grafana-rrd-server_linux_amd64.gz
     gunzip grafana-rrd-server_linux_amd64.gz
     chmod +x grafana-rrd-server_linux_amd64
-    echo export PATH=$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
+    echo export PATH=\$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
     /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 -r /var/lib/ganglia/rrds/oci/__SummaryInfo__ > output.txt 2>&1 </dev/null &
     service grafana-server restart &
     /sbin/chkconfig --add grafana-server &    
