@@ -19,7 +19,7 @@ CLUSTER_PORT=8649
 # CHECKS FOR HEADNODE
 is_master()
 {
-    hostname | grep "$MGMT_HOSTNAME"
+    hostname -i | grep "$MGMT_HOSTNAME"
     return $?
 }
 
