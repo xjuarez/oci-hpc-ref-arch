@@ -1,8 +1,6 @@
 #!/bin/bash
 set +e
 
-SUB=`hostname -i | awk -F'.' '{ print $3 }'`
-MASTER=10.0.$SUB.2
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
@@ -59,7 +57,7 @@ install_gmond()
 	#configure Ganglia monitoring
 	GMOND_CONFIG=/etc/ganglia/gmond.conf	
 	sed -i '0,/name = "unspecified"/{s/name = "unspecified"/name = "'$CLUSTER_NAME'"/}'  $GMOND_CONFIG 
-	sed -i '0,/mcast_join = 239.2.11.71/{s/mcast_join = 239.2.11.71/host = '$MASTER'/}'  $GMOND_CONFIG
+	sed -i '0,/mcast_join = 239.2.11.71/{s/mcast_join = 239.2.11.71/host = '$MGMT_HOSTNAME'/}'  $GMOND_CONFIG
 	sed -i '0,/mcast_join = 239.2.11.71/{s/mcast_join = 239.2.11.71//}'  $GMOND_CONFIG
 	sed -i '0,/bind = 239.2.11.71/{s/bind = 239.2.11.71//}'  $GMOND_CONFIG
 	sed -i '0,/retry_bind = true/{s/retry_bind = true//}'  $GMOND_CONFIG
