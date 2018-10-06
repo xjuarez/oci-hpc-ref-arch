@@ -13,7 +13,7 @@ yum repolist
 yum check-update
 yum install -y -q pdsh stress axel openmpi screen go
 yum install -y -q nfs-utils sshpass nmap htop screen git psmisc axel
-yum install -y -q gcc libffi-devel python-devel openssl-devel
+yum install -y -q gcc libffi-devel python-devel openssl-devel mysql
 #yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
 #yum group install -y -q "X Window System"
 yum group install -y -q "Development Tools"
