@@ -89,6 +89,9 @@ sleep 60
 ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh /home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
 ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 
+echo 'Configuring Grafana: '`date +%T' '%D`
+ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/configure_grafana.sh @$masterIP
+
 echo 'Transfer OpenFOAM: '`date +%T' '%D`
 sleep 60
 scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
