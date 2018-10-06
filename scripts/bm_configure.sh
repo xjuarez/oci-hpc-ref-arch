@@ -12,7 +12,7 @@ rpm -ivh epel-release-latest-7.noarch.rpm
 yum repolist
 yum check-update
 yum install -y -q pdsh stress axel openmpi screen go
-yum install -y -q nfs-utils sshpass nmap htop pdsh screen git psmisc axel
+yum install -y -q nfs-utils sshpass nmap htop screen git psmisc axel
 yum install -y -q gcc libffi-devel python-devel openssl-devel
 #yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
 #yum group install -y -q "X Window System"
@@ -50,6 +50,8 @@ export MPI_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi
 export I_MPI_FABRICS=tcp
 EOF
 
+export WCOLL=/home/$MYUSER/hostfile
+
 cat << EOF > /home/$MYUSER/.ssh/config
 Host *
     StrictHostKeyChecking no
@@ -69,11 +71,11 @@ chown $MYUSER:$MYUSER /home/$MYUSER/.ssh/*
 chown $MYUSER:$MYUSER /home/$MYUSER/bin
 chown $MYUSER:$MYUSER /home/$MYUSER/.bashrc
 
-runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile hostname > /home/$MYUSER/hostnames"
+runuser -l $MYUSER -c "pdsh hostname > /home/$MYUSER/hostnames"
 cat /home/$MYUSER/hostnames >> /etc/hosts
 sed -i 's/: / /g' /etc/hosts
-runuser -l $MYUSER -c "pdcp -w ^/home/$MYUSER/hostfile /etc/hosts ~"
-runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile sudo mv ~/hosts /etc/hosts"
+runuser -l $MYUSER -c "pdcp /etc/hosts ~"
+runuser -l $MYUSER -c "pdsh sudo mv ~/hosts /etc/hosts"
 
 if [[ `hostname` = *master* ]];
 then
