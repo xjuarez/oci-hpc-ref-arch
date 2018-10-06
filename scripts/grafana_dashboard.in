@@ -233,7 +233,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "fill": 1,
       "gridPos": {
         "h": 9,
