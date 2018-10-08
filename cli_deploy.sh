@@ -1,7 +1,7 @@
 #!/bin/bash
 #SET TENANCY
 export USER=opc
-export CNODES=19
+export CNODES=2
 export C=$1
 export PRE=`uuidgen | cut -c-5`
 export subnet=5
