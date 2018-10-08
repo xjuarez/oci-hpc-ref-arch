@@ -71,7 +71,7 @@ chown $MYUSER:$MYUSER /home/$MYUSER/.ssh/*
 chown $MYUSER:$MYUSER /home/$MYUSER/bin
 chown $MYUSER:$MYUSER /home/$MYUSER/.bashrc
 
-runuser -l $MYUSER -c "pdsh hostname > /home/$MYUSER/hostnames"
+runuser -l $MYUSER -c "pdsh -w^/home/opc/hostfile hostname -i > /home/$MYUSER/hostnames"
 cat /home/$MYUSER/hostnames >> /etc/hosts
 sed -i 's/: / /g' /etc/hosts
 runuser -l $MYUSER -c "pdcp /etc/hosts ~"
