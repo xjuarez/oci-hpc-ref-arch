@@ -71,11 +71,11 @@ chown $MYUSER:$MYUSER /home/$MYUSER/.ssh/*
 chown $MYUSER:$MYUSER /home/$MYUSER/bin
 chown $MYUSER:$MYUSER /home/$MYUSER/.bashrc
 
-runuser -l $MYUSER -c "pdsh -w^/home/opc/hostfile hostname -i > /home/$MYUSER/hostnames"
+runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile hostname > /home/$MYUSER/hostnames"
 cat /home/$MYUSER/hostnames >> /etc/hosts
 sed -i 's/: / /g' /etc/hosts
-runuser -l $MYUSER -c "pdcp /etc/hosts ~"
-runuser -l $MYUSER -c "pdsh sudo mv ~/hosts /etc/hosts"
+runuser -l $MYUSER -c "pdcp -w ^/home/$MYUSER/hostfile /etc/hosts ~"
+runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile sudo mv ~/hosts /etc/hosts"
 
 if [[ `hostname` = *master* ]];
 then
