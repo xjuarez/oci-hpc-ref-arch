@@ -86,7 +86,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile su
 
 echo 'Installing Ganglia: '`date +%T' '%D`
 sleep 60
-ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh /home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
+ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
 ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 
 echo 'Configuring Grafana: '`date +%T' '%D`
