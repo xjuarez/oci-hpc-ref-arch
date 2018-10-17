@@ -104,7 +104,7 @@ echo 'Started deployment: '$STARTTIME
 echo 'Completed deployment: '`date +%T' '%D`
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
-echo 'Grafana installed, navigate to http://'$masterIP':3000 on a web browser'
+echo 'Grafana installed, navigate to http://'$masterIP':3000/d/P6dYXV1iz/cluster-status on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
 echo 'ssh '$USER'@'$masterIP
 
@@ -115,7 +115,7 @@ cat << EOF >> removeCluster-$PRE.sh
 export masterIP=$masterIP
 export masterPRVIP=$masterPRVIP
 export USER=$USER
-export C=$1
+export C=$C
 export PRE=$PRE
 export region=$region
 export AD=$AD
