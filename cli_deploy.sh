@@ -14,7 +14,7 @@ export region=us-ashburn-1
 #export region=us-phoenix-1
 #export region=eu-london-1
 
-export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
+export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $6 }'`
 export OS=`oci compute image list -c $C --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
 export INFO='--region '$region' --availability-domain '$AD' -c '$C
 
