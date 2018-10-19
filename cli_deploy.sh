@@ -96,7 +96,7 @@ ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/s
 echo 'Transfer OpenFOAM: '`date +%T' '%D`
 sleep 60
 scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
-ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh'
+ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
 
 echo
 echo 'HPC Cluster: '$PRE
