@@ -94,7 +94,20 @@ then
     echo export PATH=\$PATH:/home/$MYUSER/rrd_server >> /home/$MYUSER/.bashrc
     /home/$MYUSER/rrd_server/grafana-rrd-server_linux_amd64 -r /var/lib/ganglia/rrds/oci/__SummaryInfo__ > output.txt 2>&1 </dev/null &
     service grafana-server restart &
-    /sbin/chkconfig --add grafana-server &    
+    /sbin/chkconfig --add grafana-server &
+    
+    cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdb.key
+EOF
+sudo yum install influxdb
+sudo systemctl start influxdb
+
+influxd -config /etc/influxdb/influxdb.conf &
 fi
 
 touch /var/log/CONFIG_COMPLETE
