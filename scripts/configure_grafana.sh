@@ -22,7 +22,7 @@ curl -u admin:admin -X POST http://localhost:3000/api/datasources/ \
 -H "Content-Type: application/json" \
 -d @- <<EOF
 {
-"name":"foamData6",
+"name":"foamData",
 "type":"influxdb",
 "url":"http://localhost:8086",
 "access":"proxy",
