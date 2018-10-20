@@ -104,10 +104,10 @@ enabled = 1
 gpgcheck = 1
 gpgkey = https://repos.influxdata.com/influxdb.key
 EOF
-sudo yum install influxdb
+sudo yum install -y influxdb
 sudo systemctl start influxdb
-
 influxd -config /etc/influxdb/influxdb.conf &
+influx -execute 'create database foamrun2'
 fi
 
 touch /var/log/CONFIG_COMPLETE
