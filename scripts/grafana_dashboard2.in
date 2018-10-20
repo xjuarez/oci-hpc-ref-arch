@@ -9,8 +9,8 @@
       "pluginName": "SimpleJson"
     },
     {
-      "name": "DS_FOAMDATA",
-      "label": "foamData",
+      "name": "DS_FOAMDATA6",
+      "label": "foamData6",
       "description": "",
       "type": "datasource",
       "pluginId": "influxdb",
@@ -72,7 +72,6 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1540053251486,
   "links": [],
   "panels": [
     {
@@ -329,7 +328,7 @@
           "value": "null"
         }
       ],
-      "valueName": "avg"
+      "valueName": "current"
     },
     {
       "cacheTimeout": null,
@@ -340,7 +339,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA}",
+      "datasource": "${DS_FOAMDATA6}",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -433,14 +432,14 @@
     },
     {
       "aliasColors": {},
-      "bars": false,
+      "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FOAMDATA}",
+      "datasource": "${DS_FOAMDATA6}",
       "fill": 4,
       "gridPos": {
         "h": 5,
-        "w": 14,
+        "w": 9,
         "x": 10,
         "y": 2
       },
@@ -450,8 +449,8 @@
         "alignAsTable": true,
         "avg": false,
         "current": false,
-        "hideEmpty": true,
-        "hideZero": true,
+        "hideEmpty": false,
+        "hideZero": false,
         "max": false,
         "min": false,
         "rightSide": true,
@@ -567,6 +566,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -600,6 +600,21 @@
       }
     },
     {
+      "content": "<img src=\"https://raw.githubusercontent.com/oci-hpc/oci-hpc-foam-motorbike/master/motorBike/f1_car.png\" />",
+      "gridPos": {
+        "h": 10,
+        "w": 5,
+        "x": 19,
+        "y": 2
+      },
+      "id": 28,
+      "links": [],
+      "mode": "html",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
       "cacheTimeout": null,
       "colorBackground": false,
       "colorValue": true,
@@ -608,7 +623,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA}",
+      "datasource": "${DS_FOAMDATA6}",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -704,11 +719,11 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FOAMDATA}",
+      "datasource": "${DS_FOAMDATA6}",
       "fill": 4,
       "gridPos": {
         "h": 5,
-        "w": 14,
+        "w": 9,
         "x": 10,
         "y": 7
       },
@@ -794,6 +809,7 @@
         "sort": 1,
         "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -834,7 +850,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA}",
+      "datasource": "${DS_FOAMDATA6}",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -1253,5 +1269,5 @@
   "timezone": "",
   "title": "Cluster and Model Status",
   "uid": "ocihpc",
-  "version": 10
+  "version": 2
 }
