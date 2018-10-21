@@ -930,7 +930,7 @@
         }
       ],
       "thresholds": "1000000,10000000",
-      "title": "Faces",
+      "title": "Points",
       "transparent": true,
       "type": "singlestat",
       "valueFontSize": "80%",
