@@ -107,7 +107,6 @@ EOF
 sudo yum install -y influxdb
 sudo systemctl start influxdb
 influxd -config /etc/influxdb/influxdb.conf &
-influx -execute 'create database foamrun'
 fi
 
 touch /var/log/CONFIG_COMPLETE
