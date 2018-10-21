@@ -460,7 +460,7 @@
         "total": false,
         "values": false
       },
-      "lines": true,
+      "lines": flase,
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
@@ -744,7 +744,7 @@
         "total": false,
         "values": false
       },
-      "lines": true,
+      "lines": false,
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
