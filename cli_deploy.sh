@@ -105,7 +105,7 @@ echo 'Started deployment: '$STARTTIME
 echo 'Completed deployment: '`date +%T' '%D`
 echo
 echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
-echo 'Grafana installed, navigate to http://'$masterIP':3000/d/ocihpc/cluster-and-model-status on a web browser'
+echo 'Grafana installed, navigate to http://'$masterIP':3000/d/ocihpc on a web browser'
 echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
 echo 'ssh '$USER'@'$masterIP
 
