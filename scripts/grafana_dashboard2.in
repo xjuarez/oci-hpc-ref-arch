@@ -1,4 +1,6 @@
 {
+    "dashboard": 
+{
   "__inputs": [
     {
       "name": "DS_GANGLIA",
@@ -1270,4 +1272,6 @@
   "title": "Cluster and Model Status",
   "uid": "ocihpc",
   "version": 2
+},
+overwrite false
 }
