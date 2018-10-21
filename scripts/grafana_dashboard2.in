@@ -460,7 +460,7 @@
         "total": false,
         "values": false
       },
-      "lines": flase,
+      "lines": false,
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
