@@ -100,7 +100,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -180,7 +180,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -260,7 +260,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#299c46"
       ],
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "format": "none",
       "gauge": {
         "maxValue": 200,
@@ -341,7 +341,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA6}",
+      "datasource": "foamData",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -437,7 +437,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FOAMDATA6}",
+      "datasource": "foamData",
       "fill": 4,
       "gridPos": {
         "h": 5,
@@ -625,7 +625,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA6}",
+      "datasource": "foamData",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -721,7 +721,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FOAMDATA6}",
+      "datasource": "foamData",
       "fill": 4,
       "gridPos": {
         "h": 5,
@@ -852,7 +852,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_FOAMDATA6}",
+      "datasource": "foamData",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -948,7 +948,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "fill": 1,
       "gridPos": {
         "h": 10,
@@ -1074,20 +1074,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": "${DS_GANGLIA}",
+          "datasource": "ganglia",
           "refId": "A",
           "target": "bytes_in:sum",
           "type": "timeserie"
         },
         {
-          "datasource": "${DS_GANGLIA}",
+          "datasource": "ganglia",
           "rawQuery": true,
           "refId": "B",
           "target": "bytes_out:sum",
           "type": "timeserie"
         },
         {
-          "datasource": "${DS_GANGLIA}",
+          "datasource": "ganglia",
           "refId": "C",
           "target": "select metric",
           "type": "timeserie"
@@ -1141,7 +1141,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_GANGLIA}",
+      "datasource": "ganglia",
       "fill": 1,
       "gridPos": {
         "h": 10,
