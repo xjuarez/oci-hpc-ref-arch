@@ -7,7 +7,7 @@ iscsiadm -m node -o new -T $IQN -p $IPV4:3260
 iscsiadm -m node -o update -T $IQN -n node.startup -v automatic
 iscsiadm -m node -T $IQN -p $IPV4:3260 -l
 
-yum install parted
+yum -y -q install parted
 parted -l | grep Error
 lsblk
 parted /dev/sdb mklabel gpt

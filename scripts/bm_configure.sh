@@ -34,9 +34,9 @@ EOF
 #DISABLE HYPERTHREADING, INSTALL GANGLIA
 cd ~
 git clone https://github.com/oci-hpc/oci-hpc-ref-arch
-git clone https://github.com/oci-hpc/oci-hpc-benchmark
+#git clone https://github.com/oci-hpc/oci-hpc-benchmark
 source oci-hpc-ref-arch/scripts/disable_ht.sh 0
-source oci-hpc-benchmark/get_files.sh
+#source oci-hpc-benchmark/get_files.sh
 #source oci-hpc-ref-arch/scripts/nfs_setup.sh $MYHOST
 
 #USER CONFIGURATION
@@ -77,6 +77,7 @@ sed -i 's/: / /g' /etc/hosts
 runuser -l $MYUSER -c "pdcp -w ^/home/$MYUSER/hostfile /etc/hosts ~"
 runuser -l $MYUSER -c "pdsh -w ^/home/$MYUSER/hostfile sudo mv ~/hosts /etc/hosts"
 
+'''
 if [[ `hostname` = *master* ]];
 then
     wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-5.2.4-1.x86_64.rpm
@@ -108,5 +109,6 @@ sudo yum install -y influxdb
 sudo systemctl start influxdb
 influxd -config /etc/influxdb/influxdb.conf &
 fi
+'''
 
 touch /var/log/CONFIG_COMPLETE

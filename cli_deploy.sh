@@ -25,7 +25,7 @@ set_variables()
 create_key()
 {
   #CREATE KEY
-  ssh-keygen -f $PRE.key -t rsa -N ''
+  ssh-keygen -f $PRE.key -t rsa -N '' > /dev/null
 }
 
 create_network()
@@ -82,37 +82,37 @@ configure_headnode()
   n=0
   until [ $n -ge 5 ]
   do
-    scp -o StrictHostKeyChecking=no -i $PRE.key $PRE.key $USER@$masterIP:/home/opc/.ssh/ && break
+    scp -o StrictHostKeyChecking=no -i $PRE.key $PRE.key $USER@$masterIP:/home/opc/.ssh/id_rsa && break
     n=$[$n+1]
     sleep 60
   done
 
-  echo 'Waiting for node to complete configuration'
-  ssh -i $PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T`"; done'
+  echo 'Waiting for node to complete configuration: `date +%T`'
+  ssh -i $PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 30; echo "Waiting for node to complete configuration: `date +%T`"; done'
   echo
 
   echo 'Attaching block volume to head node: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4 > /dev/null
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
-  sleep 60
+  sleep 30
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
 
-  echo 'Installing Ganglia: '`date +%T' '%D`
-  sleep 60
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
+  #echo 'Installing Ganglia: '`date +%T' '%D`
+  #sleep 60
+  #ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
+  #ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 
-  echo 'Configuring Grafana: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/configure_grafana.sh @$masterIP
+  #echo 'Configuring Grafana: '`date +%T' '%D`
+  #ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/configure_grafana.sh @$masterIP
 
-  echo 'Transfer OpenFOAM: '`date +%T' '%D`
-  sleep 60
-  scp -o StrictHostKeyChecking=no install_openfoam.sh -i $PRE.key $USER@$masterIP: && break
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
+  #echo 'Transfer OpenFOAM: '`date +%T' '%D`
+  #sleep 60
+  #scp -o StrictHostKeyChecking=no install_openfoam.sh -i $PRE.key $USER@$masterIP: && break
+  #ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
 }
 
 output()
@@ -188,6 +188,6 @@ echo 'Creating Block Storage and Headnode: '`date +%T' '%D`
 create_headnode
 create_compute
 configure_headnode
-configure_compute
+#configure_compute
 output
 create_remove
