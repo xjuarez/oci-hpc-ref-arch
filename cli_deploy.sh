@@ -40,8 +40,8 @@ create_network()
 create_fs()
 {
   #CREATE FILE SYSTEM
-  #echo
-  #echo 'Creating File System'
+  echo
+  echo 'Creating File System'
   #FSS=`oci fs file-system create --region $region --availability-domain "$AD" -c $C --display-name "HPC_File_System" --wait-for-state ACTIVE | jq -r '.data.id'`
   #MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$g" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 }
