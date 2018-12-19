@@ -1,11 +1,12 @@
 #!/bin/bash
 export C=$1
+export PRE=`uuidgen | cut -c-5`
+
 set_variables()
 {
   #SET TENANCY
   export USER=opc
   export CNODES=2
-  export PRE=`uuidgen | cut -c-5`
   export subnet=3
   export IMAGE=Oracle-Linux-7.5-2018.10.16-0
   export ad=2
@@ -51,7 +52,7 @@ create_headnode()
   #CREATE BLOCK AND HEADNODE
   BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
   BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
-  masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_master" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file $PRE.key | jq -r '.data.id'`
+  masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_master" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file $PRE.key.pub | jq -r '.data.id'`
   attachID=`oci compute volume-attachment attach --region $region --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED | jq -r '.data.id'`
   attachIQN=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.iqn`
   attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.ipv4`
@@ -175,10 +176,10 @@ EOF
   chmod +x removeCluster-$PRE*.sh
 }
 
+set_variables
 echo
 STARTTIME=`date +%T' '%D`
 echo 'Deploying HPC Cluster: '$PRE
-set_variables
 create_key
 echo 'Creating Network: '`date +%T' '%D`
 create_network
