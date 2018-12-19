@@ -1,9 +1,9 @@
 #!/bin/bash
-set_variables
+set_variables()
 {
   #SET TENANCY
   export USER=opc
-  export CNODES=10
+  export CNODES=2
   export C=$1
   export PRE=`uuidgen | cut -c-5`
   export subnet=3
@@ -21,13 +21,13 @@ set_variables
   export INFO='--region '$region' --availability-domain '$AD' -c '$C
 }
 
-create_key
+create_key()
 {
   #CREATE KEY
   ssh-keygen -f $PRE.key -t rsa -N ''
 }
 
-create_network
+create_network()
 {
   #CREATE NETWORK
   V=`oci network vcn create --region $region --cidr-block 10.0.$subnet.0/24 --compartment-id $C --display-name "hpc_vcn-$PRE" --wait-for-state AVAILABLE | jq -r '.data.id'`
@@ -37,7 +37,7 @@ create_network
   S=`oci network subnet create -c $C --vcn-id $V --region $region --availability-domain "$AD" --display-name "hpc_subnet-$PRE" --cidr-block "10.0.$subnet.0/26" --route-table-id $RT --security-list-ids '["'$SL'"]' --wait-for-state AVAILABLE | jq -r '.data.id'`
 }
 
-create_fs
+create_fs()
 {
   #CREATE FILE SYSTEM
   #echo
@@ -46,7 +46,7 @@ create_fs
   #MT=`oci fs mount-target create --region $region --availability-domain "$AD" -c $C --subnet-id $S --display-name "mountTarget$g" --wait-for-state ACTIVE --ip-address 10.0.0.20 | jq -r '.data.id'`
 }
 
-create_headnode
+create_headnode()
 {
   #CREATE BLOCK AND HEADNODE
   BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
@@ -57,7 +57,7 @@ create_headnode
   attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID --region $region | jq -r .data.ipv4`
 }
 
-create_compute
+create_compute()
 {
   #CREATE COMPUTE
   echo
@@ -73,7 +73,7 @@ create_compute
 }
 #for iid in `oci compute instance list --region $region -c $C | jq -r '.data[] | select(."lifecycle-state"=="RUNNING") | .id'`; do newip=`oci compute instance list-vnics --region $region --instance-id $iid | jq -r '.data[0] | ."display-name"+": "+."private-ip"+", "+."public-ip"'`; echo $iid, $newip; done
 
-configure_headnode
+configure_headnode()
 {
   #COMMANDS TO RUN ON MASTER
   echo
@@ -114,7 +114,7 @@ configure_headnode
   ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
 }
 
-output
+output()
 {
   echo
   echo 'HPC Cluster: '$PRE
@@ -128,7 +128,7 @@ output
   echo 'ssh '$USER'@'$masterIP
 }
 
-create_remove
+create_remove()
 {
   #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
