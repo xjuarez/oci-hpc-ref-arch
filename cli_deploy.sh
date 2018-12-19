@@ -180,7 +180,7 @@ STARTTIME=`date +%T' '%D`
 echo 'Deploying HPC Cluster: '$PRE
 set_variables
 create_key
-cho 'Creating Network: '`date +%T' '%D`
+echo 'Creating Network: '`date +%T' '%D`
 create_network
 create_fs
 echo 'Creating Block Storage and Headnode: '`date +%T' '%D`
