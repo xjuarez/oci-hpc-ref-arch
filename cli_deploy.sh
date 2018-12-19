@@ -170,6 +170,8 @@ cat << EOF >> removeCluster-$PRE.sh
   oci bv volume delete --region $region --volume-id $BV --force
   echo Complete
   mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
+  mv $PRE.key .$PRE.key
+  mv $PRE.key.pub .$PRE.key.pub
 EOF
   chmod +x removeCluster-$PRE*.sh
 }
