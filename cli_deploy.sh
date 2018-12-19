@@ -1,20 +1,20 @@
 #!/bin/bash
 #SET TENANCY
 export USER=opc
-export CNODES=2
+export CNODES=10
 export C=$1
 export PRE=`uuidgen | cut -c-5`
-export subnet=5
-export IMAGE=Oracle-Linux-7.5-2018.09.25-0
+export subnet=3
+export IMAGE=Oracle-Linux-7.5-2018.10.16-0
 export ad=2
-export SIZE=BM.Standard2.52
-export BLKSIZE_TB=1
-export region=us-ashburn-1
+export SIZE=BM.HPC2.36
+export BLKSIZE_TB=2
+#export region=us-ashburn-1
 #export region=eu-frankfurt-1
 #export region=us-phoenix-1
-#export region=eu-london-1
+export region=uk-london-1
 
-export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $6 }'`
+export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
 export OS=`oci compute image list -c $C --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
 export INFO='--region '$region' --availability-domain '$AD' -c '$C
 
@@ -66,7 +66,7 @@ echo 'Adding key to head node'
 n=0
 until [ $n -ge 5 ]
 do
-  scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/ && break  
+  scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa $USER@$masterIP:~/.ssh/ && break
   n=$[$n+1]
   sleep 60
 done
