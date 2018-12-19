@@ -90,13 +90,13 @@ configure_headnode()
   echo 'Waiting for node to complete configuration: `date +%T`'
   ssh -i $PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 30; echo "Waiting for node to complete configuration: `date +%T`"; done'
   echo
-
+  sleep 30
   echo 'Attaching block volume to head node: '`date +%T' '%D`
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
-  sleep 30
+  sleep 60
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
   ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
@@ -131,7 +131,6 @@ output()
 
 create_remove()
 {
-  #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
 #!/bin/bash
 export masterIP=$masterIP
@@ -153,8 +152,11 @@ export masterID=$masterID
 #DELETE INSTANCES
 echo Removing: Head Node
 oci compute instance terminate --region $region --instance-id $masterID --force
+
+EOF
+cat << "EOF" >> removeCluster-$PRE.sh
 echo Removing: Compute Nodes
-for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --preserve-boot-volume false --force; done
+for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --force; done
 sleep 60
 echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
 oci network subnet delete --region $region --subnet-id $S --force
@@ -166,12 +168,11 @@ sleep 10
 oci network internet-gateway delete --region $region --ig-id $NG --force
 sleep 10
 oci network vcn delete --region $region --vcn-id $V --force
-sleep 10
 oci bv volume delete --region $region --volume-id $BV --force
-echo Complete
 mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
 mv $PRE.key .$PRE.key
 mv $PRE.key.pub .$PRE.key.pub
+echo Complete
 EOF
   chmod +x removeCluster-$PRE*.sh
 }
