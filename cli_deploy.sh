@@ -1,10 +1,10 @@
 #!/bin/bash
+export C=$1
 set_variables()
 {
   #SET TENANCY
   export USER=opc
   export CNODES=2
-  export C=$1
   export PRE=`uuidgen | cut -c-5`
   export subnet=3
   export IMAGE=Oracle-Linux-7.5-2018.10.16-0
