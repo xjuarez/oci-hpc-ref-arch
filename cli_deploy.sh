@@ -167,7 +167,7 @@ cat << EOF >> removeCluster-$PRE.sh
   sleep 10
   oci network vcn delete --region $region --vcn-id $V --force
   sleep 10
-  oci bv volume delete --volume-id $BV
+  oci bv volume delete --region $region --volume-id $BV --force
   echo Complete
   mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
 EOF
