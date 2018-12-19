@@ -36,7 +36,7 @@ cd ~
 git clone https://github.com/oci-hpc/oci-hpc-ref-arch
 #git clone https://github.com/oci-hpc/oci-hpc-benchmark
 source oci-hpc-ref-arch/scripts/disable_ht.sh 0
-#source oci-hpc-benchmark/get_files.sh
+source oci-hpc-benchmark/get_files.sh
 #source oci-hpc-ref-arch/scripts/nfs_setup.sh $MYHOST
 
 #USER CONFIGURATION

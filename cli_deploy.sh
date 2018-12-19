@@ -92,7 +92,7 @@ configure_headnode()
   echo
 
   echo 'Attaching block volume to head node: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4 > /dev/null
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
@@ -133,45 +133,45 @@ create_remove()
 {
   #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
-  #!/bin/bash
-  export masterIP=$masterIP
-  export masterPRVIP=$masterPRVIP
-  export USER=$USER
-  export C=$C
-  export PRE=$PRE
-  export region=$region
-  export AD=$AD
-  export V=$V
-  export NG=$NG
-  export RT=$RT
-  export SL=$SL
-  export S=$S
-  export BV=$BV
-  export masterID=$masterID
+#!/bin/bash
+export masterIP=$masterIP
+export masterPRVIP=$masterPRVIP
+export USER=$USER
+export C=$C
+export PRE=$PRE
+export region=$region
+export AD=$AD
+export V=$V
+export NG=$NG
+export RT=$RT
+export SL=$SL
+export S=$S
+export BV=$BV
+export masterID=$masterID
 
 
-  #DELETE INSTANCES
-  echo Removing: Head Node
-  oci compute instance terminate --region $region --instance-id $masterID --force
-  echo Removing: Compute Nodes
-  for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --preserve-boot-volume false --force; done
-  sleep 60
-  echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
-  oci network subnet delete --region $region --subnet-id $S --force
-  sleep 10
-  oci network route-table delete --region $region --rt-id $RT --force
-  sleep 10
-  oci network security-list delete --region $region --security-list-id $SL --force
-  sleep 10
-  oci network internet-gateway delete --region $region --ig-id $NG --force
-  sleep 10
-  oci network vcn delete --region $region --vcn-id $V --force
-  sleep 10
-  oci bv volume delete --region $region --volume-id $BV --force
-  echo Complete
-  mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
-  mv $PRE.key .$PRE.key
-  mv $PRE.key.pub .$PRE.key.pub
+#DELETE INSTANCES
+echo Removing: Head Node
+oci compute instance terminate --region $region --instance-id $masterID --force
+echo Removing: Compute Nodes
+for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --preserve-boot-volume false --force; done
+sleep 60
+echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
+oci network subnet delete --region $region --subnet-id $S --force
+sleep 10
+oci network route-table delete --region $region --rt-id $RT --force
+sleep 10
+oci network security-list delete --region $region --security-list-id $SL --force
+sleep 10
+oci network internet-gateway delete --region $region --ig-id $NG --force
+sleep 10
+oci network vcn delete --region $region --vcn-id $V --force
+sleep 10
+oci bv volume delete --region $region --volume-id $BV --force
+echo Complete
+mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
+mv $PRE.key .$PRE.key
+mv $PRE.key.pub .$PRE.key.pub
 EOF
   chmod +x removeCluster-$PRE*.sh
 }
