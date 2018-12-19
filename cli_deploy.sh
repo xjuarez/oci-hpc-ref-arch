@@ -16,7 +16,7 @@ set_variables()
   #export region=eu-frankfurt-1
   #export region=us-phoenix-1
   export region=uk-london-1
-  echo $C
+
   export AD=`oci iam availability-domain list -c $C --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
   export OS=`oci compute image list -c $C --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
   export INFO='--region '$region' --availability-domain '$AD' -c '$C
@@ -67,8 +67,8 @@ create_compute()
   #LIST IP's
   echo
   echo 'Created Headnode and Compute Nodes'
-  echo 'Waiting seven minutes for init scripts to complete from: '`date +%T' '%D`
-  sleep 420
+  echo 'Waiting six minutes for init scripts to complete from: '`date +%T' '%D`
+  sleep 360
   masterIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."public-ip"')
   masterPRVIP=$(oci compute instance list-vnics --region $region --instance-id $masterID | jq -r '.data[]."private-ip"')
 }
@@ -82,37 +82,37 @@ configure_headnode()
   n=0
   until [ $n -ge 5 ]
   do
-    scp -o StrictHostKeyChecking=no $PRE.key $USER@$masterIP:~/.ssh/ && break
+    scp -o StrictHostKeyChecking=no -i $PRE.key $PRE.key $USER@$masterIP:/home/opc/.ssh/ && break
     n=$[$n+1]
     sleep 60
   done
 
   echo 'Waiting for node to complete configuration'
-  ssh $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T`"; done'
+  ssh -i $PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 60; echo "Waiting for node to complete configuration: `date +%T`"; done'
   echo
 
   echo 'Attaching block volume to head node: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
   sleep 60
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
 
   echo 'Installing Ganglia: '`date +%T' '%D`
   sleep 60
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w ^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/ganglia_setup.sh $masterPRVIP
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'go get github.com/yudai/gotty && screen -S test -d -m go/bin/gotty -c opc:+ocihpc123456 -w bash'
 
   echo 'Configuring Grafana: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/configure_grafana.sh @$masterIP
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/configure_grafana.sh @$masterIP
 
   echo 'Transfer OpenFOAM: '`date +%T' '%D`
   sleep 60
-  scp -o StrictHostKeyChecking=no install_openfoam.sh $USER@$masterIP: && break
-  ssh -o StrictHostKeyChecking=no $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
+  scp -o StrictHostKeyChecking=no install_openfoam.sh -i $PRE.key $USER@$masterIP: && break
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP 'chmod +x install_openfoam.sh && ./install_openfoam.sh' > /dev/null
 }
 
 output()
@@ -126,53 +126,51 @@ output()
   echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
   echo 'Grafana installed, navigate to http://'$masterIP':3000/d/ocihpc on a web browser'
   echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
-  echo 'ssh '$USER'@'$masterIP
+  echo 'ssh -i '$PRE.key' '$USER'@'$masterIP
 }
 
 create_remove()
 {
   #CREATE REMOVE SCRIPT
 cat << EOF >> removeCluster-$PRE.sh
-#!/bin/bash
-export masterIP=$masterIP
-export masterPRVIP=$masterPRVIP
-export USER=$USER
-export C=$C
-export PRE=$PRE
-export region=$region
-export AD=$AD
-export V=$V
-export NG=$NG
-export RT=$RT
-export SL=$SL
-export S=$S
-export BV=$BV
-export masterID=$masterID
+  #!/bin/bash
+  export masterIP=$masterIP
+  export masterPRVIP=$masterPRVIP
+  export USER=$USER
+  export C=$C
+  export PRE=$PRE
+  export region=$region
+  export AD=$AD
+  export V=$V
+  export NG=$NG
+  export RT=$RT
+  export SL=$SL
+  export S=$S
+  export BV=$BV
+  export masterID=$masterID
 
 
-#DELETE INSTANCES
-echo Removing: Head Node
-oci compute instance terminate --region $region --instance-id $masterID --force
-
+  #DELETE INSTANCES
+  echo Removing: Head Node
+  oci compute instance terminate --region $region --instance-id $masterID --force
+  echo Removing: Compute Nodes
+  for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --preserve-boot-volume false --force; done
+  sleep 60
+  echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
+  oci network subnet delete --region $region --subnet-id $S --force
+  sleep 10
+  oci network route-table delete --region $region --rt-id $RT --force
+  sleep 10
+  oci network security-list delete --region $region --security-list-id $SL --force
+  sleep 10
+  oci network internet-gateway delete --region $region --ig-id $NG --force
+  sleep 10
+  oci network vcn delete --region $region --vcn-id $V --force
+  sleep 10
+  oci bv volume delete --volume-id $BV
+  echo Complete
+  mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
 EOF
-cat << "EOF" >> removeCluster-$PRE.sh
-echo Removing: Compute Nodes
-for instanceid in $(oci compute instance list --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --region $region --instance-id $instanceid --preserve-boot-volume false --force; done
-sleep 60
-echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
-oci network subnet delete --region $region --subnet-id $S --force
-sleep 10
-oci network route-table delete --region $region --rt-id $RT --force
-sleep 10
-oci network security-list delete --region $region --security-list-id $SL --force
-sleep 10
-oci network internet-gateway delete --region $region --ig-id $NG --force
-sleep 10
-oci network vcn delete --region $region --vcn-id $V --force
-echo Complete
-mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
-EOF
-
   chmod +x removeCluster-$PRE*.sh
 }
 
