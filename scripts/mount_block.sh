@@ -11,7 +11,7 @@ attach()
     iscsiadm -m node -T $IQN -p $IPV4:3260 -l
 }
 
-mount()
+mounter()
 {
     yum -y -q install parted
     sleep 30
@@ -28,6 +28,9 @@ mount()
         fi
     done
     mount -a
+    df -h
 }
 
-$operation
+if [ $1 = "attach" ]; then attach
+elif [ $1 = "mount" ]; then mounter
+else echo error; fi
