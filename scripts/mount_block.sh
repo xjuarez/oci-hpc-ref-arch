@@ -1,20 +1,34 @@
 #!/bin/bash
-#arguments [iqn] [ipv4]
-export IQN=$1
-export IPV4=$2
+#arguments [operation] [iqn] [ipv4]
+export IQN=$2
+export IPV4=$3
+export operation=$1
 
-iscsiadm -m node -o new -T $IQN -p $IPV4:3260
-iscsiadm -m node -o update -T $IQN -n node.startup -v automatic
-iscsiadm -m node -T $IQN -p $IPV4:3260 -l
+attach()
+{
+    iscsiadm -m node -o new -T $IQN -p $IPV4:3260
+    iscsiadm -m node -o update -T $IQN -n node.startup -v automatic
+    iscsiadm -m node -T $IQN -p $IPV4:3260 -l
+    yum -y -q install parted
+}
 
-sleep 30
+mount()
+{
+    sleep 30
+    for i in `lsblk -d --noheadings | awk '{print $1}'`
+    do 
+        if [ $i = "sda" ]; then  break
+        else
+            echo $i
+            lsblk
+            parted /dev/$i mklabel gpt
+            parted -a opt /dev/$i mkpart primary ext4 0% 100%
+            mkfs.ext4 -L datapartition /dev/$i\1
+            mkdir -p /mnt/blk$i
+            mount -o defaults /dev/$i\1 /mnt/blk$i
+            echo "/dev/$i"1" /mnt/blk$i ext4 defaults 0 2" | tee -a /etc/fstab
+        fi
+    done
+}
 
-yum -y -q install parted
-parted -l | grep Error
-lsblk
-parted /dev/sdb mklabel gpt
-parted -a opt /dev/sdb mkpart primary ext4 0% 100%
-mkfs.ext4 -L datapartition /dev/sdb1
-mkdir -p /mnt/blk
-mount -o defaults /dev/sdb1 /mnt/blk
-echo "/dev/sdb1 /mnt/blk ext4 defaults 0 2" | tee -a /etc/fstab
+$operation

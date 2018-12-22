@@ -92,7 +92,7 @@ configure_headnode()
   echo
   sleep 30
   echo 'Attaching block volume to head node: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh $attachIQN $attachIPV4
+  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh attach $attachIQN $attachIPV4
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
