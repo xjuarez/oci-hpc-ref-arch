@@ -13,18 +13,24 @@ attach()
 
 mounter()
 {
+
     yum -y -q install parted
-    sleep 30
+    if [ `lsblk -d --noheadings | awk '{print $1}' | grep nvme0n1` = "nvme0n1" ]; then NVME=true; else NVME=false; fi
     for i in `lsblk -d --noheadings | awk '{print $1}'`
     do 
-        if [ $i = "sda" ]; then  break
+        if [ $i = "sda" ]; then  next
         else
             lsblk
             parted /dev/$i mklabel gpt
             parted -a opt /dev/$i mkpart primary ext4 0% 100%
-            mkfs.ext4 -L datapartition /dev/$i\1
-            mkdir -p /mnt/blk$i
-            echo "/dev/$i"1" /mnt/blk$i ext4 defaults 0 2" | tee -a /etc/fstab
+            if $NVME; then 
+                extension=$i\p1
+            else 
+                extension=$i\1
+            fi
+            mkfs.ext4 -L datapartition /dev/$extension          
+            echo "/dev/$extension /mnt/blk$extension ext4 defaults 0 2" | tee -a /etc/fstab
+            mkdir -p /mnt/blk$extension
         fi
     done
     mount -a
