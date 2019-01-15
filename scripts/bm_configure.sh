@@ -8,8 +8,8 @@ sudo systemctl disable firewalld
 
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 rpm -ivh epel-release-latest-7.noarch.rpm
-sudo yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo
-sudo rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
+yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo
+rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
 
 
 yum repolist
@@ -20,7 +20,7 @@ yum install -y -q gcc libffi-devel python-devel openssl-devel mysql
 #yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
 #yum group install -y -q "X Window System"
 yum group install -y -q "Development Tools"
-sudo yum install -y intel-mpi
+yum install -y intel-mpi
 
 IP=`hostname -i`
 localip=`echo $IP | cut --delimiter='.' -f -3`
