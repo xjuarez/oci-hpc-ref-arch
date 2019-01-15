@@ -3,7 +3,7 @@ source variables
 
 set_variables()
 {
-  export AD=`oci iam availability-domain list -c $C --profile $P --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
+  export AD=`oci iam availability-domain list --profile $P -c $C --region $region | jq -r .data[].name | grep -e '-'$ad`
   export OS=`oci compute image list -c $C --profile $P --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
   export INFO='--profile '$P' --region '$region' --availability-domain '$AD' -c '$C
 }
