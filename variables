@@ -1,0 +1,15 @@
+  #!/bin/bash
+  
+  #SET TENANCY
+  export USER=opc
+  export CNODES=10
+  export subnet=3
+  export IMAGE=Oracle-Linux-7.5-2018.10.16-0
+  export ad=2
+  export SIZE=BM.HPC2.36
+  export BLKSIZE_TB=2
+  #export region=us-ashburn-1
+  #export region=eu-frankfurt-1
+  #export region=us-phoenix-1
+  export region=uk-london-1
+  export P=LAB
