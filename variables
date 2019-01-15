@@ -2,6 +2,7 @@
 
 
 export C=
+export PRE=`uuidgen | cut -c-5`
 export USER=opc
 export CNODES=10
 export subnet=3
