@@ -1,7 +1,5 @@
 #!/bin/bash
 source variables
-export C=$1
-export PRE=`uuidgen | cut -c-5`
 
 set_variables()
 {
@@ -13,7 +11,7 @@ set_variables()
 create_key()
 {
   #CREATE KEY
-  ssh-keygen -f $PRE.key -t rsa -N '' > /dev/null
+  ssh-keygen -f rsa_$PRE.key -t rsa -N '' > /dev/null
 }
 
 create_network()
@@ -40,7 +38,7 @@ create_headnode()
   #CREATE BLOCK AND HEADNODE
   BLKSIZE_GB=`expr $BLKSIZE_TB \* 1024`
   BV=`oci bv volume create $INFO --display-name "hpc_block-$PRE" --size-in-gbs $BLKSIZE_GB --wait-for-state AVAILABLE | jq -r '.data.id'`
-  masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_master" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file $PRE.key.pub | jq -r '.data.id'`
+  masterID=`oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_master" --image-id $OS --subnet-id $S --private-ip 10.0.$subnet.2 --wait-for-state RUNNING --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file rsa_$PRE.key.pub | jq -r '.data.id'`
   attachID=`oci compute volume-attachment attach --profile $P --region $region --instance-id $masterID --type iscsi --volume-id $BV --wait-for-state ATTACHED | jq -r '.data.id'`
   attachIQN=`oci compute volume-attachment get --volume-attachment-id $attachID --profile $P --region $region | jq -r .data.iqn`
   attachIPV4=`oci compute volume-attachment get --volume-attachment-id $attachID --profile $P --region $region | jq -r .data.ipv4`
@@ -51,7 +49,7 @@ create_compute()
   #CREATE COMPUTE
   echo
   echo 'Creating Compute Nodes: '`date +%T' '%D`
-  computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file $PRE.key.pub; done)
+  computeData=$(for i in `seq 1 $CNODES`; do oci compute instance launch $INFO --shape "$SIZE" --display-name "hpc_"$PRE"_cn$i" --image-id $OS --subnet-id $S --assign-public-ip true  --user-data-file scripts/bm_configure.sh --ssh-authorized-keys-file rsa_$PRE.key.pub; done)
   #LIST IP's
   echo
   echo 'Created Headnode and Compute Nodes'
@@ -70,24 +68,24 @@ configure_headnode()
   n=0
   until [ $n -ge 5 ]
   do
-    scp -o StrictHostKeyChecking=no -i $PRE.key $PRE.key $USER@$masterIP:/home/opc/.ssh/id_rsa && break
+    scp -o StrictHostKeyChecking=no -i rsa_$PRE.key rsa_$PRE.key $USER@$masterIP:/home/opc/.ssh/id_rsa && break
     n=$[$n+1]
     sleep 60
   done
 
   echo 'Waiting for node to complete configuration: 'date +%T
-  ssh -i $PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 30; echo "Waiting for node to complete configuration: `date +%T`"; done'
+  ssh -i rsa_$PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 30; echo "Waiting for node to complete configuration: `date +%T`"; done'
   echo
   sleep 30
   echo 'Attaching block volume to head node: '`date +%T' '%D`
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh attach $attachIQN $attachIPV4
+  ssh -o StrictHostKeyChecking=no -i rsa_$PRE.key $USER@$masterIP sudo sh /root/oci-hpc-ref-arch/scripts/mount_block.sh attach $attachIQN $attachIPV4
   echo
 
   echo 'Creating NFS share: '`date +%T' '%D`
-  sleep 60
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP pdsh -w^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
-  ssh -o StrictHostKeyChecking=no -i $PRE.key $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
+  sleep 120
+  ssh -o StrictHostKeyChecking=no -i rsa_$PRE.key $USER@$masterIP "sudo chown $USER:$USER /home/$USER/hostfile; nmap -n -p 80 10.0.$subnet.0/20 | grep 10.0.$subnet | awk '{ print \$5 }' > /home/$USER/hostfile"
+  ssh -o StrictHostKeyChecking=no -i rsa_$PRE.key $USER@$masterIP pdsh -w^/home/$USER/hostfile sudo sh /root/oci-hpc-ref-arch/scripts/nfs_setup.sh $masterPRVIP
+  ssh -o StrictHostKeyChecking=no -i rsa_$PRE.key $USER@$masterIP "sudo sh /root/oci-hpc-ref-arch/scripts/set_hostsfile.sh $USER"
 
   #echo 'Installing Ganglia: '`date +%T' '%D`
   #sleep 60
@@ -114,7 +112,7 @@ output()
   echo 'Ganglia installed, navigate to http://'$masterIP'/ganglia on a web browser'
   echo 'Grafana installed, navigate to http://'$masterIP':3000/d/ocihpc on a web browser'
   echo 'GOTTY installed, navigate to http://'$masterIP':8080 on a web browser'
-  echo 'ssh -i '$PRE.key' '$USER'@'$masterIP
+  echo 'ssh -i 'rsa_$PRE.key' '$USER'@'$masterIP
 }
 
 create_remove()
@@ -159,8 +157,8 @@ sleep 10
 oci network vcn delete --profile $P --region $region --vcn-id $V --force
 oci bv volume delete --profile $P --region $region --volume-id $BV --force
 mv removeCluster-$PRE.sh .removeCluster-$PRE.sh
-mv $PRE.key .$PRE.key
-mv $PRE.key.pub .$PRE.key.pub
+mv rsa_$PRE.key .rsa_$PRE.key
+mv rsa_$PRE.key.pub .rsa_$PRE.key.pub
 echo Complete
 EOF
   chmod +x removeCluster-$PRE*.sh
