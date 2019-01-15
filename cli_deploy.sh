@@ -158,7 +158,7 @@ oci compute instance terminate --profile $P --region $region --instance-id $mast
 EOF
 cat << "EOF" >> removeCluster-$PRE.sh
 echo Removing: Compute Nodes
-for instanceid in $(oci compute instance list --profile $P --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --profile '$P' --region $region --instance-id $instanceid --force; done
+for instanceid in $(oci compute instance list --profile $P --region $region -c $C | jq -r '.data[] | select(."display-name" | contains ("'$PRE'")) | .id'); do oci compute instance terminate --profile $P --region $region --instance-id $instanceid --force; done
 sleep 60
 echo Removing: Subnet, Route Table, Security List, Gateway, and VCN
 oci network subnet delete --profile $P --region $region --subnet-id $S --force
