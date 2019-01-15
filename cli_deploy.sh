@@ -1,23 +1,10 @@
 #!/bin/bash
+source variables
 export C=$1
 export PRE=`uuidgen | cut -c-5`
 
 set_variables()
 {
-  #SET TENANCY
-  export USER=opc
-  export CNODES=10
-  export subnet=3
-  export IMAGE=Oracle-Linux-7.5-2018.10.16-0
-  export ad=2
-  export SIZE=BM.HPC2.36
-  export BLKSIZE_TB=2
-  #export region=us-ashburn-1
-  #export region=eu-frankfurt-1
-  #export region=us-phoenix-1
-  export region=uk-london-1
-  export P=LAB
-
   export AD=`oci iam availability-domain list -c $C --profile $P --region $region --output table | grep 'AD-'$ad | awk '{ print $4 }'`
   export OS=`oci compute image list -c $C --profile $P --region $region --output table --query "data [*].{ImageName:\"display-name\", OCID:id}" | grep $IMAGE | awk '{ print $4 }'`
   export INFO='--profile '$P' --region '$region' --availability-domain '$AD' -c '$C
