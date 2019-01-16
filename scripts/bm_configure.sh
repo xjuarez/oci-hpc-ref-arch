@@ -20,7 +20,7 @@ yum install -y -q gcc libffi-devel python-devel openssl-devel mysql
 #yum install -y -q  fontconfig freetype freetype-devel fontconfig-devel libstdc++ libXext libXt libXrender-devel.x86_64 libXrender.x86_64 mesa-libGL.x86_64
 #yum group install -y -q "X Window System"
 yum group install -y -q "Development Tools"
-yum install -y intel-mpi
+yum install -y -q intel-mpi
 
 IP=`hostname -i`
 localip=`echo $IP | cut --delimiter='.' -f -3`
