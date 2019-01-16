@@ -73,7 +73,7 @@ configure_headnode()
     sleep 60
   done
 
-  echo 'Waiting for node to complete configuration: 'date +%T
+  echo 'Waiting for node to complete configuration: '`date +%T' '%D`
   ssh -i rsa_$PRE.key $USER@$masterIP 'while [ ! -f /var/log/CONFIG_COMPLETE ]; do sleep 30; echo "Waiting for node to complete configuration: `date +%T`"; done'
   echo
   sleep 30
